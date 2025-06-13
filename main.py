@@ -6,6 +6,7 @@ from langchain.chat_models import init_chat_model
 from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
+
 load_dotenv()
 
 llm = init_chat_model(
@@ -38,10 +39,7 @@ def classify_message(state: State):
         [
             {
                 "role": "system",
-                "content": (
-                    "You are a message classifier. "
-                    "Classify the last message as either emotional or logical."
-                ),
+                "content": "Classify the message as either 'emotional' or 'logical'. "
             },
             {"role": "user", "content": last_message.content},
         ]
@@ -52,7 +50,13 @@ def classify_message(state: State):
 
 
 def router(state: State) -> str:
+    """
+    Route the message to the appropriate agent or tool based
+    on the message type and content.
+    """
     message_type = state.get("message_type", "logical")
+
+    # Default routing based on message type
     if message_type == "emotional":
         return {"next": "emotional_agent"}
     return {"next": "logical_agent"}
@@ -63,10 +67,7 @@ def emotional_agent(state: State) -> str:
     messages = [
         {
             "role": "system",
-            "content": (
-                "You are an emotional agent. "
-                "Respond to the last message with empathy and understanding."
-            ),
+            "content": "You are an emotional agent. Respond to the user's message with empathy and understanding."
         },
         {"role": "user", "content": last_message.content},
     ]
@@ -79,11 +80,7 @@ def logical_agent(state: State) -> str:
     messages = [
         {
             "role": "system",
-            "content": (
-                "You are a logical agent"
-                "Respond to the last message with a rational and "
-                "structured answer."
-            ),
+            "content": "You are a logical agent. Respond to the user's message with facts and reasoning."
         },
         {"role": "user", "content": last_message.content},
     ]
@@ -103,11 +100,16 @@ graph_builder.add_edge("classifier", "router")
 graph_builder.add_conditional_edges(
     "router",
     lambda state: state.get("next"),
-    {"logical_agent": "logical_agent", "emotional_agent": "emotional_agent"},
+    {
+        "logical_agent": "logical_agent",
+        "emotional_agent": "emotional_agent",
+        "fhir_tool": "fhir_tool"
+    },
 )
 
 graph_builder.add_edge("emotional_agent", END)
 graph_builder.add_edge("logical_agent", END)
+graph_builder.add_edge("fhir_tool", END)
 
 
 graph = graph_builder.compile()
