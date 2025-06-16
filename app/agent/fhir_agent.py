@@ -3,7 +3,10 @@ import os
 from pydantic import BaseModel
 from langgraph.prebuilt import create_react_agent
 from langchain.chat_models import init_chat_model
+from langgraph.checkpoint.memory import MemorySaver
 from app.agent.prompts.agent_prompts.fhir_agent import FHIR_AGENT_PROMPTS
+
+memory = MemorySaver()
 
 
 class FHIRResponse(BaseModel):
@@ -70,4 +73,5 @@ fhir_agent = create_react_agent(
     tools=[calling_fhir],
     response_format=FHIRResponse,
     prompt=FHIR_AGENT_PROMPTS,
+    checkpointer=memory,
 )

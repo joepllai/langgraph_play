@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from typing import Annotated, Literal
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
@@ -6,8 +5,6 @@ from langchain.chat_models import init_chat_model
 from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
-
-load_dotenv()
 
 llm = init_chat_model(
     model="gemini-2.5-flash-preview-05-20",
@@ -103,13 +100,11 @@ graph_builder.add_conditional_edges(
     {
         "logical_agent": "logical_agent",
         "emotional_agent": "emotional_agent",
-        "fhir_tool": "fhir_tool",
     },
 )
 
 graph_builder.add_edge("emotional_agent", END)
 graph_builder.add_edge("logical_agent", END)
-graph_builder.add_edge("fhir_tool", END)
 
 
 graph = graph_builder.compile()

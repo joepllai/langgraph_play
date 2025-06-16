@@ -5,6 +5,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from app.utils.apiHelper import ApiHelper
 from app.utils.exceptions import (
@@ -12,9 +15,6 @@ from app.utils.exceptions import (
     validation_exception_handler,
 )
 from app.api import register_api
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 @asynccontextmanager

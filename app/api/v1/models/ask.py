@@ -4,6 +4,7 @@ from typing import Optional
 
 class QuestionData(BaseModel):
     query: str = Field(description="user ask question")
+    session_id: str = Field(description="session id to identify this conversation")
     history_length: Optional[int] = Field(
         default=6,
         ge=0,
