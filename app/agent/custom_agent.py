@@ -39,7 +39,7 @@ def classify_message(state: State):
         [
             {
                 "role": "system",
-                "content": "Classify the message as either 'emotional' or 'logical'. "
+                "content": "Classify the message as either 'emotional' or 'logical'. ",
             },
             {"role": "user", "content": last_message.content},
         ]
@@ -67,7 +67,7 @@ def emotional_agent(state: State) -> str:
     messages = [
         {
             "role": "system",
-            "content": "You are an emotional agent. Respond to the user's message with empathy and understanding."
+            "content": "You are an emotional agent. Respond to the user's message with empathy and understanding.",
         },
         {"role": "user", "content": last_message.content},
     ]
@@ -80,7 +80,7 @@ def logical_agent(state: State) -> str:
     messages = [
         {
             "role": "system",
-            "content": "You are a logical agent. Respond to the user's message with facts and reasoning."
+            "content": "You are a logical agent. Respond to the user's message with facts and reasoning.",
         },
         {"role": "user", "content": last_message.content},
     ]
@@ -103,7 +103,7 @@ graph_builder.add_conditional_edges(
     {
         "logical_agent": "logical_agent",
         "emotional_agent": "emotional_agent",
-        "fhir_tool": "fhir_tool"
+        "fhir_tool": "fhir_tool",
     },
 )
 
@@ -125,7 +125,3 @@ def run_chatbot():
         state = graph.invoke(state)
         if state["messages"]:
             print(f"Bot: {state['messages'][-1].content}")
-
-
-if __name__ == "__main__":
-    run_chatbot()
