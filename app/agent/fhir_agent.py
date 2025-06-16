@@ -2,22 +2,15 @@ import requests
 import os
 from pydantic import BaseModel
 from langgraph.prebuilt import create_react_agent
-from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import MemorySaver
 from app.agent.prompts.agent_prompts.fhir_agent import FHIR_AGENT_PROMPTS
+from app.agent.llm_models import gemini_2_5
 
 memory = MemorySaver()
 
 
 class FHIRResponse(BaseModel):
     answer: str
-
-
-llm = init_chat_model(
-    model="gemini-2.5-flash-preview-05-20",
-    model_provider="google_genai",
-    temperature=0,
-)
 
 
 def calling_fhir(params: dict) -> dict:
@@ -69,7 +62,7 @@ def calling_fhir(params: dict) -> dict:
 
 
 fhir_agent = create_react_agent(
-    model=llm,
+    model=gemini_2_5,
     tools=[calling_fhir],
     response_format=FHIRResponse,
     prompt=FHIR_AGENT_PROMPTS,
