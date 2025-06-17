@@ -9,7 +9,7 @@ from app.utils.apiHelper import ApiHelper
 
 @router.get("/refresh_twcore_index")
 async def refresh_index():
-    docs = await ApiHelper.getFHIRAPIDocs()
+    docs = await ApiHelper().getFHIRAPIDocs()
     textSplitter = Textsplitter.CharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200,

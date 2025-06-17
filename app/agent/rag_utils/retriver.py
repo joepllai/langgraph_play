@@ -1,7 +1,7 @@
 from langchain_postgres import PGVector
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from app.config.agent import PGVectorConfig
 
+print("Initializing FHIR API docs store...", PGVectorConfig.PSQL_CONNECTION)
 fhir_api_docs_store = PGVector(
     embeddings=PGVectorConfig.FHIRAPIDocs.EMBEDDINGS_MODEL,
     connection=PGVectorConfig.PSQL_CONNECTION,

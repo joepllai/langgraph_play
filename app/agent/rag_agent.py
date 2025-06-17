@@ -62,6 +62,7 @@ def calling_fhir(params: dict) -> dict:
 
 
 rag_agent = create_react_agent(
+    name="rag_agent",
     model=gemini_2_5,
     tools=[calling_fhir],
     response_format=FHIRResponse,

@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python Debugger: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "--app-dir",
+                "/home/cow505285/playground/langgraph_play/",
+                "app.main:app",
+                "--reload"
+            ],
+            "jinja": true
+        }
+    ]
+}
