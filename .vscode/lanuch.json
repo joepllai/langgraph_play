@@ -9,11 +9,12 @@
             "module": "uvicorn",
             "args": [
                 "--app-dir",
-                "/home/cow505285/playground/langgraph_play/",
-                "app.main:app",
+                "/home/cow505285/playground/langgraph_play/app/",
+                "main:app",
                 "--reload"
             ],
-            "jinja": true
+            "jinja": true,
+            "cwd": "/home/cow505285/playground/langgraph_play/app"
         }
     ]
 }
