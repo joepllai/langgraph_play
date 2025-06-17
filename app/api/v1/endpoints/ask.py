@@ -1,14 +1,14 @@
 from app.api.v1.router import router
 
 from app.api.v1.models.ask import QuestionData
-from app.agent.fhir_agent import fhir_agent
+from app.agent.supervisor_agent import supervisor_agent
 
 
 @router.post("/ask")
 async def ask(
     data: QuestionData,
 ):
-    response = fhir_agent.invoke(
+    response = supervisor_agent.invoke(
         input={
             "messages": [
                 {

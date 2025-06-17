@@ -92,7 +92,7 @@ graph_builder.add_node("router", router)
 graph_builder.add_node("emotional_agent", emotional_agent)
 graph_builder.add_node("logical_agent", logical_agent)
 
-graph_builder.add_edge(START, "classifier")
+graph_builder.add_edge(START, "classifier")  # supervisor (agent))
 graph_builder.add_edge("classifier", "router")
 graph_builder.add_conditional_edges(
     "router",
