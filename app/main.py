@@ -15,10 +15,11 @@ from app.utils.exceptions import (
     validation_exception_handler,
 )
 from app.api import register_api
-
+from app.utils.tracer import langfuse
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    
     yield
     # Clean up Tcp connection
     await ApiHelper().stop()

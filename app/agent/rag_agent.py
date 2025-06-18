@@ -1,71 +1,37 @@
-import requests
-import os
 from pydantic import BaseModel
 from langgraph.prebuilt import create_react_agent
+from langchain.tools.retriever import create_retriever_tool
+from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
-from app.agent.prompts.agent_prompts.fhir_agent import FHIR_AGENT_PROMPTS
+from app.agent.rag_utils.retriver import fhir_api_docs_retriever
+from app.agent.prompts.agent_prompts.rag_agent import RAG_AGENT_PROMPTS
 from app.agent.llm_models import gemini_2_5
 
 memory = MemorySaver()
 
+retriver_tool = create_retriever_tool(
+    retriever=fhir_api_docs_retriever,
+    name="fhir_api_docs_retriever_tool",
+    description="Retrieves FHIR API documentation based on the query.",
+)
 
-class FHIRResponse(BaseModel):
-    answer: str
+@tool
+def off_topic():
+    """This tool is used to indicate that the query is off-topic and not related to FHIR API documentation."""
+    return "This query is off-topic and does not relate to FHIR API documentation."
 
 
-def calling_fhir(params: dict) -> dict:
-    """
-    Make an HTTP GET request to the FHIR API endpoint.
-
-    Args:
-        params (dict): A dictionary containing FHIR query parameters
-            - resource_type (str): The FHIR resource type
-                (e.g., 'Patient', 'Observation')
-            - resource_id (str, optional): The specific resource ID
-            - query_params (dict, optional): Additional query parameters
-
-    Returns:
-        dict: A dictionary containing the status and data of the response
-            - status: "success" or "error"
-            - data: The JSON response data if successful, None if failed
-            - error: Error message if the request failed
-    """
-    print("Calling FHIR API with params:", params)
-    try:
-        # Construct the base URL
-        base_url = "https://hapi.35.229.200.151.nip.io/fhir/CP_V3"
-
-        # Build the resource path
-        resource_path = params.get("resource_type", "")
-        if resource_id := params.get("resource_id"):
-            resource_path = f"{resource_path}/{resource_id}"
-
-        # Construct the full URL
-        url = f"{base_url}/{resource_path}"
-
-        # Add query parameters if they exist
-        query_params = params.get("query_params", {})
-        print("Query parameters:", query_params)
-
-        response = requests.get(
-            url,
-            params=query_params,
-            headers={
-                "X-API-KEY": os.getenv("X-API-KEY"),
-            },
-            timeout=10,
-        )
-        response.raise_for_status()
-        return {"status": "success", "data": response.json()}
-    except requests.exceptions.RequestException as e:
-        return {"status": "error", "data": None, "error": str(e)}
+class RAGResponse(BaseModel):
+    """Response model for the RAG agent."""
+    response: str
+    source: str = None
 
 
 rag_agent = create_react_agent(
     name="rag_agent",
     model=gemini_2_5,
-    tools=[calling_fhir],
-    response_format=FHIRResponse,
-    prompt=FHIR_AGENT_PROMPTS,
+    tools=[retriver_tool, off_topic ],
+    response_format=RAGResponse,
+    prompt=RAG_AGENT_PROMPTS,
     checkpointer=memory,
 )

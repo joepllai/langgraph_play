@@ -3,18 +3,18 @@
     "configurations": [
 
         {
-            "name": "Python Debugger: FastAPI",
-            "type": "debugpy",
+            "name": "Uvicorn with env",
+            "type": "python",
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "--app-dir",
-                "/home/cow505285/playground/langgraph_play/app/",
-                "main:app",
+                "app.main:app",
                 "--reload"
             ],
-            "jinja": true,
-            "cwd": "/home/cow505285/playground/langgraph_play/app"
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal"
         }
+
     ]
 }

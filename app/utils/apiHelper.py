@@ -3,12 +3,6 @@ import os
 
 from app.utils.singleton import Singleton
 
-
-class GetResponse:
-    result: any
-    status: str
-
-
 class ApiHelper(metaclass=Singleton):
     def __init__(self):
         self.client = httpx.AsyncClient()
@@ -20,16 +14,16 @@ class ApiHelper(metaclass=Singleton):
         await self.client.aclose()
         self.client = None
 
-    async def getFHIRAPIDocs(self) -> GetResponse:
+    async def getFHIRAPIDocs(self):
         response = await self.client.get(
-            f"{self.fhir_url}/api-docs",
+            f"{self.fhir_url}/fhir/api-docs",
             headers={
                 "X-API-KEY": os.getenv("X-API-KEY"),
             },
         )
-        return response.json()
+        return response.text
 
-    async def getToken(self, data) -> GetResponse:
+    async def getToken(self, data):
         response = await self.client.post(
             self.apim_url,
             data=data,

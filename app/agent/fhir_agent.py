@@ -8,10 +8,11 @@ from app.agent.llm_models import gemini_2_5
 
 memory = MemorySaver()
 
-
 class FHIRResponse(BaseModel):
-    answer: str
-
+    original_query: str
+    response: str
+    status: str
+    error: str = None
 
 def calling_fhir(params: dict) -> dict:
     """

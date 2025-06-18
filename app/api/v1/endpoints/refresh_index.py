@@ -1,16 +1,18 @@
 import langchain.text_splitter as Textsplitter
 
 from langchain.schema.document import Document
+from langfuse import observe
+
 
 from app.api.v1.router import router
 from app.agent.rag_utils.retriver import fhir_api_docs_store
 from app.utils.apiHelper import ApiHelper
 
-
+@observe
 @router.get("/refresh_twcore_index")
 async def refresh_index():
     docs = await ApiHelper().getFHIRAPIDocs()
-    textSplitter = Textsplitter.CharacterTextSplitter(
+    textSplitter = Textsplitter.RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200,
     )
