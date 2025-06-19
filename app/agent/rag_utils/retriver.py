@@ -13,4 +13,7 @@ fhir_api_docs_store = PGVector(
     use_jsonb=PGVectorConfig.FHIRAPIDocs.USE_JSONB,
 )
 
-fhir_api_docs_retriever = fhir_api_docs_store.as_retriever()
+fhir_api_docs_retriever = fhir_api_docs_store.as_retriever(
+    search_type="similarity_score_threshold",
+    search_kwargs={"score_threshold": 0.1, "k": 10},
+)

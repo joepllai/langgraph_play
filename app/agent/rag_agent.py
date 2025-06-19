@@ -5,15 +5,16 @@ from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
 from app.agent.rag_utils.retriver import fhir_api_docs_retriever
 from app.agent.prompts.agent_prompts.rag_agent import RAG_AGENT_PROMPTS
-from app.agent.llm_models import gemini_2_5
+from app.agent.llm_models import gemini_2_5, mle_model_qwen
 
 memory = MemorySaver()
 
-retriver_tool = create_retriever_tool(
+fhir_api_docs_retriever_tool = create_retriever_tool(
     retriever=fhir_api_docs_retriever,
     name="fhir_api_docs_retriever_tool",
     description="Retrieves FHIR API documentation based on the query.",
 )
+
 
 @tool
 def off_topic():
@@ -23,14 +24,15 @@ def off_topic():
 
 class RAGResponse(BaseModel):
     """Response model for the RAG agent."""
+
     response: str
     source: str = None
 
 
 rag_agent = create_react_agent(
     name="rag_agent",
-    model=gemini_2_5,
-    tools=[retriver_tool, off_topic ],
+    model=mle_model_qwen,
+    tools=[fhir_api_docs_retriever_tool, off_topic],
     response_format=RAGResponse,
     prompt=RAG_AGENT_PROMPTS,
     checkpointer=memory,
