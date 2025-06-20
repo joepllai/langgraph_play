@@ -1,5 +1,13 @@
+import os
+
 from app.config.database import DatabaseConfig
 
+class AOCConfig:
+    API_KEY = os.getenv("ASUS_API_KEY")
+    ASSISTANT_ID = os.getenv("AOCC_ASSISTANT_ID", "1")
+    SERVICE = os.getenv("AOCC_SERVICE_ID", "azure")
+    VERSION = os.getenv("AOCC_ASSISTANT_ID", "gpt4o")
+    TIMEOUT = int(os.getenv("AOCC_TIEMOUT", 45))  # Timeout in seconds
 
 class EmbeddingsConfig:
     EMBEDDINGS_MODEL = "models/text-embedding-004"  # Embeddings model to use

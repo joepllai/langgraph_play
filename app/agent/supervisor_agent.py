@@ -1,6 +1,6 @@
 from langgraph_supervisor import create_supervisor
 from pydantic import BaseModel
-from app.agent.llm_models import gemini_2_5
+from app.agent.llm_models import gemini_2_5, asus_aoc_gpt
 from app.agent.fhir_agent import fhir_agent
 from app.agent.rag_agent import rag_agent
 from app.agent.web_search_agent import web_search_agent

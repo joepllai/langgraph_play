@@ -1,9 +1,10 @@
 from pydantic import BaseModel
+from langchain.agents import tool
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.agent.prompts.agent_prompts.fhir_agent import FHIR_AGENT_PROMPTS
-from app.agent.llm_models import gemini_2_5, mle_model_qwen
+from app.agent.llm_models import gemini_2_5
 from app.utils.apiHelper import ApiHelper
 
 memory = MemorySaver()
@@ -15,7 +16,7 @@ class FHIRResponse(BaseModel):
     status: str
     error: str = None
 
-
+@tool
 async def calling_fhir(params: dict) -> dict:
     """
     Build and send an HTTP GET request to the FHIR API using the provided parameters.
@@ -61,7 +62,7 @@ async def calling_fhir(params: dict) -> dict:
 
 fhir_agent = create_react_agent(
     name="fhir_agent",
-    model=mle_model_qwen,
+    model=gemini_2_5,
     tools=[calling_fhir],
     response_format=FHIRResponse,
     prompt=FHIR_AGENT_PROMPTS,
