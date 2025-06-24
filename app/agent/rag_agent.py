@@ -5,7 +5,7 @@ from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
 from app.agent.rag_utils.retriver import fhir_api_docs_retriever
 from app.agent.prompts.agent_prompts.rag_agent import RAG_AGENT_PROMPTS
-from app.agent.llm_models import gemini_2_5, asus_aoc_gpt
+from app.agent.llm_models import gemini_2_5, azure_foundry_gpt_4o
 
 memory = MemorySaver()
 
@@ -31,9 +31,8 @@ class RAGResponse(BaseModel):
 
 rag_agent = create_react_agent(
     name="rag_agent",
-    model=asus_aoc_gpt,
+    model=azure_foundry_gpt_4o,
     tools=[fhir_api_docs_retriever_tool, off_topic],
-    response_format=RAGResponse,
     prompt=RAG_AGENT_PROMPTS,
     checkpointer=memory,
 )

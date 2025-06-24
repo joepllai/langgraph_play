@@ -1,6 +1,6 @@
 from langgraph_supervisor import create_supervisor
 from pydantic import BaseModel
-from app.agent.llm_models import gemini_2_5, asus_aoc_gpt
+from app.agent.llm_models import gemini_2_5, azure_foundry_gpt_4o
 from app.agent.fhir_agent import fhir_agent
 from app.agent.rag_agent import rag_agent
 from app.agent.web_search_agent import web_search_agent
@@ -14,7 +14,7 @@ class SupervisorResponse(BaseModel):
 
 
 supervisor_graph = create_supervisor(
-    model=gemini_2_5,
+    model=azure_foundry_gpt_4o,
     agents=[fhir_agent, rag_agent, web_search_agent],
     prompt=SUPERVISOR_AGENT_PROMPT,
     response_format=SupervisorResponse,

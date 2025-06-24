@@ -4,6 +4,7 @@ from langchain_core.tools import tool
 from app.agent.prompts.agent_prompts.web_search_agent import WEB_SEARCH_AGENT_PROMPTS
 from app.agent.llm_models import gemini_2_5
 from langchain_community.utilities import DuckDuckGoSearchAPIWrapper
+from langchain_community.tools import DuckDuckGoSearchResults
 
 
 @tool
@@ -22,7 +23,8 @@ def web_search(search_term: str, domain="https://twcore.mohw.gov.tw/") -> str:
     Returns:
         str: A string containing the search results retrieved from the DuckDuckGo API.
     """
-    search = DuckDuckGoSearchAPIWrapper(max_results=3)
+    search = DuckDuckGoSearchResults(max_results=3)
+    # wrapper = DuckDuckGoSearchAPIWrapper(max_results=3)
 
     return search.invoke(f"{search_term} site:{domain}")
 
@@ -38,6 +40,5 @@ web_search_agent = create_react_agent(
     name="web_search_agent",
     model=gemini_2_5,
     tools=[web_search],
-    response_format=WebSearchResponse,
     prompt=WEB_SEARCH_AGENT_PROMPTS,
 )
