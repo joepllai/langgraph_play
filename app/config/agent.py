@@ -4,9 +4,9 @@ from app.config.database import DatabaseConfig
 
 
 class AzureFoundryConfig:
-    API_KEY = os.getenv("AZURE_FOUNDRY_API_KEY", "example")
-    BASE_URL = os.getenv("AZURE_FOUNDRY_BASE_URL", "https://cdp-ai-foundry.openai.azure.com/")
-    API_VERSION= os.getenv("OPENAI_API_VERSION", "2024-12-01-preview")
+    API_KEY = os.getenv("AZURE_INFERENCE_CREDENTIAL", "example")
+    BASE_URL = os.getenv("AZURE_INFERENCE_ENDPOINT", "https://cdp-ai-foundry.openai.azure.com/")
+    API_VERSION= os.getenv("AZURE_FOUNDRY_API_VERSION", "2024-12-01-preview")
     MODEL = os.getenv("AZURE_FOUNDRY_MODEL", "gpt-4o")
     TEMPERATURE = int(os.getenv("AZURE_FOUNDRY_TEMPERATURE", 0))
 

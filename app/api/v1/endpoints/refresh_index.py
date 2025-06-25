@@ -7,7 +7,7 @@ from fastapi import BackgroundTasks
 
 
 from app.api.v1.router import router
-from app.agent.rag_utils.retriver import fhir_api_docs_store
+from app.agent.rag_utils.retriever import fhir_api_docs_store
 from app.utils.apiHelper import ApiHelper
 from app.api.v1.models.refresh_index import RefreshIndexQueryParams, IndexTargetEnum
 

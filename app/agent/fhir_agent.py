@@ -11,8 +11,7 @@ memory = MemorySaver()
 
 
 class FHIRResponse(BaseModel):
-    original_query: str
-    response: str
+    data: str
     status: str
     error: str = None
 
@@ -67,4 +66,5 @@ fhir_agent = create_react_agent(
     tools=[calling_fhir],
     prompt=FHIR_AGENT_PROMPTS,
     checkpointer=memory,
+    response_format=FHIRResponse
 )

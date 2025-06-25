@@ -2,13 +2,12 @@ from pydantic import BaseModel
 from langgraph.prebuilt import create_react_agent
 from langchain_core.tools import tool
 from app.agent.prompts.agent_prompts.web_search_agent import WEB_SEARCH_AGENT_PROMPTS
-from app.agent.llm_models import gemini_2_5
-from langchain_community.utilities import DuckDuckGoSearchAPIWrapper
+from app.agent.llm_models import azure_foundry_gpt_4o
 from langchain_community.tools import DuckDuckGoSearchResults
 
 
 @tool
-def web_search(search_term: str, domain="https://twcore.mohw.gov.tw/") -> str:
+async def web_search(search_term: str, domain="https://twcore.mohw.gov.tw/") -> str:
     """
     A web search tool that utilizes the DuckDuckGo search engine to query specific domains.
 
@@ -26,7 +25,7 @@ def web_search(search_term: str, domain="https://twcore.mohw.gov.tw/") -> str:
     search = DuckDuckGoSearchResults(max_results=3)
     # wrapper = DuckDuckGoSearchAPIWrapper(max_results=3)
 
-    return search.invoke(f"{search_term} site:{domain}")
+    return await search.ainvoke(f"{search_term} site:{domain}")
 
 
 class WebSearchResponse(BaseModel):
@@ -38,7 +37,7 @@ class WebSearchResponse(BaseModel):
 
 web_search_agent = create_react_agent(
     name="web_search_agent",
-    model=gemini_2_5,
+    model=azure_foundry_gpt_4o,
     tools=[web_search],
     prompt=WEB_SEARCH_AGENT_PROMPTS,
 )

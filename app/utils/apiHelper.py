@@ -35,7 +35,7 @@ class ApiHelper(metaclass=Singleton):
             return response.text
         except httpx.HTTPError as e:
             print(f"FHIR API error: {e}")
-            return None
+            return Non
 
     async def getFHIR(self, url, params):
         try:
