@@ -27,6 +27,7 @@ class EmbeddingsConfig:
 
 class PGVectorConfig:
     PSQL_CONNECTION = f"postgresql+psycopg://{DatabaseConfig.PSQL_USER}:{DatabaseConfig.PSQL_PASSWORD}@{DatabaseConfig.PSQL_HOSTNAME}:{DatabaseConfig.PSQL_PORT}/{DatabaseConfig.PSQL_VECTOR_STORE_DB}"
+    ASYNC_PSQL_CONNECTION = f"postgresql+asyncpg://{DatabaseConfig.PSQL_USER}:{DatabaseConfig.PSQL_PASSWORD}@{DatabaseConfig.PSQL_HOSTNAME}:{DatabaseConfig.PSQL_PORT}/{DatabaseConfig.PSQL_VECTOR_STORE_DB}"
 
     class FHIRAPIDocs:
         COLLECTION_NAME = "fhir-api-docs"

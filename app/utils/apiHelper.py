@@ -8,10 +8,7 @@ from app.utils.singleton import Singleton
 class ApiHelper(metaclass=Singleton):
     def __init__(self):
         self.fhir_client = httpx.AsyncClient(
-            base_url="https://hapi.35.229.200.151.nip.io/fhir",
-            headers={
-                "X-API-KEY": os.getenv("X-API-KEY"),
-            },
+            base_url="http://hapi.fhir.org/baseR4",
             timeout=10.0,
         )
         self.apim_client = httpx.AsyncClient(
@@ -21,23 +18,30 @@ class ApiHelper(metaclass=Singleton):
 
     async def stop(self):
         """Gracefully shutdown. Call from FastAPI shutdown hook."""
-        await asyncio.gather(
-            self.fhir_client.aclose(),
-            self.apim_client.aclose(),
-        )
+        tasks = []
+        if self.fhir_client is not None:
+            tasks.append(self.fhir_client.aclose())
+        if self.apim_client is not None:
+            tasks.append(self.apim_client.aclose())
+        if tasks:
+            await asyncio.gather(*tasks)
         self.fhir_client = None
         self.apim_client = None
 
     async def getFHIRAPIDocs(self):
+        if self.fhir_client is None:
+            raise RuntimeError("FHIR client is not initialized or has been closed.")
         try:
             response = await self.fhir_client.get("/api-docs")
             response.raise_for_status()
             return response.text
         except httpx.HTTPError as e:
             print(f"FHIR API error: {e}")
-            return Non
+            return None
 
     async def getFHIR(self, url, params):
+        if self.fhir_client is None:
+            raise RuntimeError("FHIR client is not initialized or has been closed.")
         try:
             response = await self.fhir_client.get(url=url, params=params)
             response.raise_for_status()
@@ -47,6 +51,8 @@ class ApiHelper(metaclass=Singleton):
             return None
 
     async def getToken(self, data):
+        if self.apim_client is None:
+            raise RuntimeError("APIM client is not initialized or has been closed.")
         try:
             response = await self.apim_client.post(url="/", data=data)
             response.raise_for_status()
@@ -56,6 +62,8 @@ class ApiHelper(metaclass=Singleton):
             return {"error": str(e)}
 
     async def verify_token(self, token: str) -> tuple[bool, dict]:
+        if self.apim_client is None:
+            raise RuntimeError("APIM client is not initialized or has been closed.")
         if token.startswith("Bearer "):
             token = token[len("Bearer ") :]
         try:

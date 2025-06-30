@@ -13,7 +13,7 @@ memory = MemorySaver()
 class FHIRResponse(BaseModel):
     data: str
     status: str
-    error: str = None
+    error: str = ""
 
 
 @tool
@@ -44,12 +44,10 @@ async def calling_fhir(params: dict) -> dict:
     if resource_id := params.get("resource_id"):
         resource_path = f"{resource_path}/{resource_id}"
 
-    # Construct the full URL
-    url = f"CP_V3/{resource_path}"
 
     # Add query parameters if they exist
     query_params = params.get("query_params", {})
-    response_text = await ApiHelper().getFHIR(url=url, params=query_params)
+    response_text = await ApiHelper().getFHIR(url=resource_path, params=query_params)
     if response_text is None:
         return {
             "status": "error",

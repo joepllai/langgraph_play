@@ -1,3 +1,4 @@
+from typing import Optional, List
 from langgraph_supervisor import create_supervisor
 from pydantic import BaseModel
 from app.agent.llm_models import gemini_2_5, azure_foundry_gpt_4o
@@ -8,9 +9,11 @@ from app.agent.prompts.agent_prompts.supervisor_agent import SUPERVISOR_AGENT_PR
 
 
 class SupervisorResponse(BaseModel):
-    """Response model for the supervisor agent."""
-
-    response: str
+    """Flexible response model for the supervisor agent."""
+    answer: str  # The main answer or pass-through from sub-agent
+    clarification: Optional[str] = None  # If clarification is needed
+    context: Optional[List[str]] = None  # Any supporting context or details
+    agent: Optional[str] = None  # (Optional) Which sub-agent produced the answer
 
 
 supervisor_graph = create_supervisor(

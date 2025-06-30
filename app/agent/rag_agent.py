@@ -26,8 +26,7 @@ class RAGResponse(BaseModel):
     """Response model for the RAG agent."""
 
     response: str
-    source: str = None
-
+    source: str = ""
 
 rag_agent = create_react_agent(
     name="rag_agent",

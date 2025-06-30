@@ -2,12 +2,12 @@ from langchain.chat_models import init_chat_model
 from langchain_openai import AzureChatOpenAI
 
 azure_foundry_gpt_4o = AzureChatOpenAI(
-                azure_deployment="gpt-4o",
+                azure_deployment="gpt-4.1",
                 api_version="2025-01-01-preview",
                 temperature=0,
                 max_tokens=None,
                 timeout=None,
-                model="gpt-4o",
+                model="gpt-4.1",
                 # model_version="0125",
                 # other params...
             )
