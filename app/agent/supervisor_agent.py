@@ -11,6 +11,7 @@ from app.agent.prompts.agent_prompts.supervisor_agent import SUPERVISOR_AGENT_PR
 class SupervisorResponse(BaseModel):
     """Flexible response model for the supervisor agent."""
     answer: str  # The main answer or pass-through from sub-agent
+    source_url: str  # The FHIR API endpoints used by the fhir-agent related to this question
     clarification: Optional[str] = None  # If clarification is needed
     context: Optional[List[str]] = None  # Any supporting context or details
     agent: Optional[str] = None  # (Optional) Which sub-agent produced the answer

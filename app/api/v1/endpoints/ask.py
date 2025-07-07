@@ -16,6 +16,7 @@ async def ask(
     config = cast(RunnableConfig, {
         "thread_id": data.session_id,
         "callbacks": [CallbackHandler()],
+        "tags": ["api", "ask", "supervisor", "v1"]
     })
     response = await supervisor_agent.ainvoke(
         input={

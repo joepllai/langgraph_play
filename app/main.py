@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI):
 
     yield
     # Clean up Tcp connection
+    langfuse.flush()
     await ApiHelper().stop()
 
 

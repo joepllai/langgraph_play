@@ -8,7 +8,10 @@ from app.utils.singleton import Singleton
 class ApiHelper(metaclass=Singleton):
     def __init__(self):
         self.fhir_client = httpx.AsyncClient(
-            base_url="http://hapi.fhir.org/baseR4",
+            base_url="https://hapi.35.229.200.151.nip.io/fhir/CP_V3",
+            headers= {
+                "X-API-Key": os.getenv("X-API-KEY", "")
+            },
             timeout=10.0,
         )
         self.apim_client = httpx.AsyncClient(
