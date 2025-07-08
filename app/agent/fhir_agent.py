@@ -6,7 +6,10 @@ from typing import Optional, Dict, Any
 from urllib.parse import urlencode
 import re
 
-from app.agent.prompts.agent_prompts.fhir_agent import FHIR_AGENT_PROMPTS, FHIR_AGENT_PROMPT_TEMPLATE
+from app.agent.prompts.agent_prompts.fhir_agent import (
+    FHIR_AGENT_PROMPTS,
+    FHIR_AGENT_PROMPT_TEMPLATE,
+)
 from app.agent.llm_models import gemini_2_5, azure_foundry_gpt_4o
 from app.utils.apiHelper import ApiHelper
 
@@ -59,55 +62,65 @@ async def calling_fhir(params: FHIRQueryInput) -> dict:
 
     # Add query parameters if they exist
     query_params = params.query_params or {}
-    
+
     endpoint = resource_path
     if query_params:
         from urllib.parse import urlencode
+
         endpoint += "?" + urlencode(query_params)
-    
+
     response_text = await ApiHelper().getFHIR(url=resource_path, params=query_params)
     if response_text is None:
         return {
             "status": "error",
             "data": None,
             "error": "Failed to fetch data from FHIR API",
-            "source_url": endpoint
+            "source_url": endpoint,
         }
 
-    return {"status": "success", "data": response_text, "error": None, "source_url": endpoint}
+    return {
+        "status": "success",
+        "data": response_text,
+        "error": None,
+        "source_url": endpoint,
+    }
 
 
 def format_message_history(messages):
-    return "\n".join([f"{m['role']}: {m['content']}" for m in messages])
+    lines = []
+    for m in messages:
+        role = m.type
+        name = getattr(m, "name", None)
+        prefix = f"{role}({name})" if name else role
+        lines.append(f"{prefix}: {getattr(m, 'content', str(m))}")
+    return "\n".join(lines)
 
 
 def extract_latest_openapi_suggestion(messages):
     for msg in reversed(messages):
-        if re.search(r"\*\*Method\*\*:", msg.get('content', '')):
-            return msg['content']
+        if msg.content and re.search(r"\*\*Method\*\*:", msg.content):
+            return msg.content
     return "No valid FHIR API suggestion found."
 
 
 def fhir_pre_model_hook(state, config):
-    # state is typically a list of messages
-    openapi_suggestion = extract_latest_openapi_suggestion(state)
-    full_message_history = format_message_history(state)
-    # Fill the prompt template
+    openapi_suggestion = extract_latest_openapi_suggestion(state["messages"])
+    full_message_history = format_message_history(state["messages"])
     prompt = FHIR_AGENT_PROMPT_TEMPLATE.format(
         openapi_suggestion=openapi_suggestion,
         full_message_history=full_message_history
     )
-    # Return a dict with the prompt as the only message (or as needed by your LLM)
-    # If your model expects a list of messages, you can do:
-    return [{"role": "system", "content": prompt}]
+    new_state = dict(state)
+    new_state["prompt"] = prompt
+    return new_state
 
 
 fhir_agent = create_react_agent(
     name="fhir_agent",
     model=azure_foundry_gpt_4o,
     tools=[calling_fhir],
-    prompt=None,  # The prompt will be set dynamically by the hook
+    prompt="{prompt}",
     pre_model_hook=fhir_pre_model_hook,
     checkpointer=memory,
-    response_format=FHIRResponse
+    response_format=FHIRResponse,
 )
