@@ -103,24 +103,19 @@ def extract_latest_openapi_suggestion(messages):
     return "No valid FHIR API suggestion found."
 
 
-def fhir_pre_model_hook(state, config):
+def fhir_prompt_from_state(state):
     openapi_suggestion = extract_latest_openapi_suggestion(state["messages"])
     full_message_history = format_message_history(state["messages"])
-    prompt = FHIR_AGENT_PROMPT_TEMPLATE.format(
-        openapi_suggestion=openapi_suggestion,
-        full_message_history=full_message_history
+    return FHIR_AGENT_PROMPT_TEMPLATE.format(
+        openapi_suggestion=openapi_suggestion, full_message_history=full_message_history
     )
-    new_state = dict(state)
-    new_state["prompt"] = prompt
-    return new_state
 
 
 fhir_agent = create_react_agent(
     name="fhir_agent",
     model=azure_foundry_gpt_4o,
     tools=[calling_fhir],
-    prompt="{prompt}",
-    pre_model_hook=fhir_pre_model_hook,
+    prompt=fhir_prompt_from_state,
     checkpointer=memory,
     response_format=FHIRResponse,
 )
